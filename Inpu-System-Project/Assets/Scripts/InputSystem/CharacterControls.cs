@@ -29,12 +29,21 @@ public partial class @CharacterControls: IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Move"",
-                    ""type"": ""Value"",
+                    ""type"": ""Button"",
                     ""id"": ""dfe5a1fb-6e39-47db-bece-8112cea55a3a"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": ""NormalizeVector2"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""07e7ef0a-a4ca-45a4-ad1c-e3c7bc925abf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -103,6 +112,28 @@ public partial class @CharacterControls: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""47f503cf-e7a1-4011-a2b9-86be545a66d2"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""84c47876-7c79-4d0d-8c5a-3119167c34a4"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -112,6 +143,7 @@ public partial class @CharacterControls: IInputActionCollection2, IDisposable
         // PlayerBehavior
         m_PlayerBehavior = asset.FindActionMap("PlayerBehavior", throwIfNotFound: true);
         m_PlayerBehavior_Move = m_PlayerBehavior.FindAction("Move", throwIfNotFound: true);
+        m_PlayerBehavior_Jump = m_PlayerBehavior.FindAction("Jump", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -174,11 +206,13 @@ public partial class @CharacterControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PlayerBehavior;
     private List<IPlayerBehaviorActions> m_PlayerBehaviorActionsCallbackInterfaces = new List<IPlayerBehaviorActions>();
     private readonly InputAction m_PlayerBehavior_Move;
+    private readonly InputAction m_PlayerBehavior_Jump;
     public struct PlayerBehaviorActions
     {
         private @CharacterControls m_Wrapper;
         public PlayerBehaviorActions(@CharacterControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerBehavior_Move;
+        public InputAction @Jump => m_Wrapper.m_PlayerBehavior_Jump;
         public InputActionMap Get() { return m_Wrapper.m_PlayerBehavior; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -191,6 +225,9 @@ public partial class @CharacterControls: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @Jump.started += instance.OnJump;
+            @Jump.performed += instance.OnJump;
+            @Jump.canceled += instance.OnJump;
         }
 
         private void UnregisterCallbacks(IPlayerBehaviorActions instance)
@@ -198,6 +235,9 @@ public partial class @CharacterControls: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @Jump.started -= instance.OnJump;
+            @Jump.performed -= instance.OnJump;
+            @Jump.canceled -= instance.OnJump;
         }
 
         public void RemoveCallbacks(IPlayerBehaviorActions instance)
@@ -218,5 +258,6 @@ public partial class @CharacterControls: IInputActionCollection2, IDisposable
     public interface IPlayerBehaviorActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
     }
 }

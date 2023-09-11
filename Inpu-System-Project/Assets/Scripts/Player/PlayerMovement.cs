@@ -18,10 +18,15 @@ public class PlayerMovement : MonoBehaviour
 
         characterControls = new CharacterControls();
         characterControls.PlayerBehavior.Move.started += OnMoveInputReceived;
+        characterControls.PlayerBehavior.Move.started += PrintInputAction;
         characterControls.PlayerBehavior.Move.canceled += OnMoveInputReceived;
         characterControls.PlayerBehavior.Move.performed += OnMoveInputReceived;
     }
 
+    private void PrintInputAction(InputAction.CallbackContext context)
+    {
+        print(context.ReadValue<Vector2>());
+    }
 
     private void Update()
     {
